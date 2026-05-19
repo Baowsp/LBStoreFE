@@ -1,7 +1,7 @@
 import type { Product, ProductComment } from '../types/product';
 import { useAuthStore } from '../store/useAuthStore';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
 /**
  * Kiểm tra JWT token đã hết hạn chưa bằng cách decode payload
