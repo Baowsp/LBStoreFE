@@ -36,7 +36,7 @@ export const AddressTab = ({
     const provinceObj = vietnamData.provinces.find((p: any) => p.code === code);
     const provinceName = provinceObj ? provinceObj.name : '';
     
-    // Get wards for this province
+    // Get wards/districts for this province
     const wardsList = (vietnamData.wards as any)[code] || [];
     setAvailableWards(wardsList);
     
@@ -113,7 +113,7 @@ export const AddressTab = ({
               onChange={handleWardChange}
               className="p-3 rounded-xl border border-gray-200 text-sm font-medium outline-none focus:ring-2 focus:ring-red-500 bg-white disabled:bg-gray-100 disabled:text-gray-400 cursor-pointer"
             >
-              <option value="">Chọn Quận / Huyện / Xã / Phường</option>
+              <option value="">Chọn Xã / Quận</option>
               {availableWards.map((w: any) => (
                 <option key={w.code} value={w.code}>
                   {w.name}

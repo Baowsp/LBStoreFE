@@ -30,7 +30,8 @@ export const ProductCard = ({ product }: { product: Product }) => {
           cartItemId: `${product.id}-${defaultVariant?.id || 'def'}-${variantId || 'def'}`,
           variantId: variantId, // Gán ID thực tế từ DB
           selectedColor: defaultColor?.color || '',
-          selectedStorage: defaultVariant?.storage || ''
+          selectedStorage: defaultVariant?.storage || '',
+          maxQuantity: defaultColor?.stockQuantity ?? defaultVariant?.stockQuantity ?? 10
         });
       }}
       className="w-full mt-2 bg-cps text-white py-1 rounded-md text-sm font-bold hover:bg-red-700"

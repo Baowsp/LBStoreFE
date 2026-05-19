@@ -172,52 +172,52 @@ export const ProfilePage = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-          <ProfileSidebar 
-            userInfo={userInfo} 
-            activeTab={activeTab} 
-            setActiveTab={setActiveTab} 
+          <ProfileSidebar
+            userInfo={userInfo}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
           />
 
           <div className="lg:col-span-9 space-y-6">
             {activeTab === 'account' && (
-              <AccountTab 
-                userInfo={userInfo} 
-                setUserInfo={setUserInfo} 
-                handleUpdateProfile={handleUpdateProfile} 
+              <AccountTab
+                userInfo={userInfo}
+                setUserInfo={setUserInfo}
+                handleUpdateProfile={handleUpdateProfile}
               />
             )}
 
             {activeTab === 'orders' && (
-              <OrdersTab 
-                orders={orders} 
-                loadingOrders={loadingOrders} 
-                setSelectedOrderForModal={setSelectedOrderForModal} 
+              <OrdersTab
+                orders={orders}
+                loadingOrders={loadingOrders}
+                setSelectedOrderForModal={setSelectedOrderForModal}
               />
             )}
 
             {activeTab === 'warranty' && (
-              <WarrantyTab 
-                warrantyItems={warrantyItems} 
+              <WarrantyTab
+                warrantyItems={warrantyItems}
               />
             )}
 
             {activeTab === 'address' && (
-              <AddressTab 
-                addresses={addresses} 
-                showAddAddress={showAddAddress} 
-                setShowAddAddress={setShowAddAddress} 
-                newAddress={newAddress} 
-                setNewAddress={setNewAddress} 
-                handleAddAddress={handleAddAddress} 
-                handleDeleteAddress={handleDeleteAddress} 
+              <AddressTab
+                addresses={addresses}
+                showAddAddress={showAddAddress}
+                setShowAddAddress={setShowAddAddress}
+                newAddress={newAddress}
+                setNewAddress={setNewAddress}
+                handleAddAddress={handleAddAddress}
+                handleDeleteAddress={handleDeleteAddress}
               />
             )}
 
             {activeTab === 'password' && (
-              <PasswordTab 
-                passwordForm={passwordForm} 
-                setPasswordForm={setPasswordForm} 
-                handleChangePassword={handleChangePassword} 
+              <PasswordTab
+                passwordForm={passwordForm}
+                setPasswordForm={setPasswordForm}
+                handleChangePassword={handleChangePassword}
               />
             )}
           </div>
@@ -225,9 +225,9 @@ export const ProfilePage = () => {
       </div>
 
       {selectedOrderForModal && (
-        <OrderDetailModal 
-          order={selectedOrderForModal} 
-          onClose={() => setSelectedOrderForModal(null)} 
+        <OrderDetailModal
+          order={selectedOrderForModal}
+          onClose={() => setSelectedOrderForModal(null)}
         />
       )}
     </div>

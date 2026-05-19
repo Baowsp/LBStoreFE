@@ -36,7 +36,7 @@ export const MOCK_SUB_BANNERS = [
   }
 ];
 
-export const MOCK_PRODUCTS: Product[] = [
+export const MOCK_PRODUCTS: any[] = [
   {
     id: 1,
     name: "iPhone 16 Pro Max 512GB",
