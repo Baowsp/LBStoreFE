@@ -375,10 +375,10 @@ export const createDisplayBanner = async (bannerId: number, data: any): Promise<
 export const updateDisplayBanner = async (id: number, bannerId: number | null, data: any): Promise<any> => {
     try {
         const token = useAuthStore.getState().token;
-        const url = bannerId 
+        const url = bannerId
             ? `${API_BASE_URL}/v1/display-banners/${id}?bannerId=${bannerId}`
             : `${API_BASE_URL}/v1/display-banners/${id}`;
-            
+
         const response = await fetch(url, {
             method: 'PUT',
             headers: {
