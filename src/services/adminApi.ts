@@ -3,6 +3,23 @@ import { useAuthStore } from '../store/useAuthStore';
 const BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
 /**
+ * Helper: Hỗ trợ tự động chuyển đổi URL hình ảnh từ localhost thành URL VPS/Backend thực tế
+ */
+export const getCleanImageUrl = (url: string | null | undefined): string => {
+  if (!url) return '';
+  if (url.startsWith('http://localhost:8080/uploads/')) {
+    try {
+      const parsedBase = new URL(BASE);
+      const backendOrigin = `${parsedBase.protocol}//${parsedBase.host}`;
+      return url.replace('http://localhost:8080', backendOrigin);
+    } catch {
+      return url;
+    }
+  }
+  return url;
+};
+
+/**
  * Kiểm tra JWT token đã hết hạn chưa
  */
 const isTokenExpired = (token: string): boolean => {
@@ -87,11 +104,44 @@ export const adminFetchProducts = (page = 0, size = 10, search = '') => {
     : `${BASE}/products?page=${page}&size=${size}&sort=${sort}`;
   return fetchWithAuth(url)
     .then(r => handleResponse<any>(r))
-    .then(d => ({ content: d.content ?? [], totalElements: d.totalElements ?? 0, totalPages: d.totalPages ?? 1 }));
+    .then(d => {
+      const cleanProduct = (p: any) => ({
+        ...p,
+        imageURL: getCleanImageUrl(p.imageURL),
+        image_url: getCleanImageUrl(p.image_url),
+        variants: (p.variants ?? []).map((v: any) => ({
+          ...v,
+          thumbnailUrl: getCleanImageUrl(v.thumbnailUrl),
+          variantColors: (v.variantColors ?? []).map((vc: any) => ({
+            ...vc,
+            imageUrl: getCleanImageUrl(vc.imageUrl)
+          }))
+        }))
+      });
+      return {
+        content: (d.content ?? []).map(cleanProduct),
+        totalElements: d.totalElements ?? 0,
+        totalPages: d.totalPages ?? 1
+      };
+    });
 };
 
 export const adminFetchProduct = (id: number) =>
-  fetchWithAuth(`${BASE}/products/${id}`).then(r => handleResponse<any>(r));
+  fetchWithAuth(`${BASE}/products/${id}`)
+    .then(r => handleResponse<any>(r))
+    .then(p => ({
+      ...p,
+      imageURL: getCleanImageUrl(p.imageURL),
+      image_url: getCleanImageUrl(p.image_url),
+      variants: (p.variants ?? []).map((v: any) => ({
+        ...v,
+        thumbnailUrl: getCleanImageUrl(v.thumbnailUrl),
+        variantColors: (v.variantColors ?? []).map((vc: any) => ({
+          ...vc,
+          imageUrl: getCleanImageUrl(vc.imageUrl)
+        }))
+      }))
+    }));
 
 export const adminCreateProduct = (data: any) =>
   fetchWithAuth(`${BASE}/products`, {
@@ -238,5 +288,9 @@ export const adminUploadFile = async (file: File): Promise<{ url: string }> => {
     }
     throw new Error(`Server (500): ${errorText}`);
   }
-  return res.json();
+  const data = await res.json();
+  return {
+    ...data,
+    url: getCleanImageUrl(data.url)
+  };
 };

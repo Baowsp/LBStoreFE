@@ -4,6 +4,23 @@ import { useAuthStore } from '../store/useAuthStore';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
 /**
+ * Helper: Hỗ trợ tự động chuyển đổi URL hình ảnh từ localhost thành URL VPS/Backend thực tế
+ */
+export const getCleanImageUrl = (url: string | null | undefined): string => {
+    if (!url) return '';
+    if (url.startsWith('http://localhost:8080/uploads/')) {
+        try {
+            const parsedBase = new URL(API_BASE_URL);
+            const backendOrigin = `${parsedBase.protocol}//${parsedBase.host}`;
+            return url.replace('http://localhost:8080', backendOrigin);
+        } catch {
+            return url;
+        }
+    }
+    return url;
+};
+
+/**
  * Kiểm tra JWT token đã hết hạn chưa bằng cách decode payload
  */
 export const isTokenExpired = (token: string): boolean => {
@@ -132,10 +149,12 @@ export const mapBackendProductToFrontend = (bp: BackendProduct): Product => {
     const firstColor = firstVariant?.variantColors?.[0] ?? null;
 
     // Ưu tiên: image từ màu đầu tiên → thumbnail variant → placeholder
-    const image =
+    const rawImage =
         firstColor?.imageUrl ||
         firstVariant?.thumbnailUrl ||
         'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop';
+
+    const image = getCleanImageUrl(rawImage);
 
     // Giá bán thực tế (discounted nếu có, fallback original)
     const price = firstVariant
@@ -170,12 +189,12 @@ export const mapBackendProductToFrontend = (bp: BackendProduct): Product => {
             originalPrice: v.originalPrice,
             discountedPrice: v.discountedPrice ?? null,
             stockQuantity: v.stockQuantity,
-            thumbnailUrl: v.thumbnailUrl ?? '',
+            thumbnailUrl: getCleanImageUrl(v.thumbnailUrl),
             variantColors: (v.variantColors ?? []).map(c => ({
                 id: c.id,
                 color: c.color,
                 stockQuantity: c.stockQuantity,
-                imageUrl: c.imageUrl ?? '',
+                imageUrl: getCleanImageUrl(c.imageUrl),
             })),
         })),
         specDetails: [],
@@ -281,10 +300,17 @@ export const fetchBanners = async (page?: number, size?: number): Promise<any> =
             throw new Error(`Failed to fetch banners: ${response.status}`);
         }
         const data = await response.json();
+        const cleanBanner = (b: any) => ({
+            ...b,
+            imageUrl: getCleanImageUrl(b.imageUrl)
+        });
         if (page !== undefined && size !== undefined) {
-            return data;
+            return {
+                ...data,
+                content: (data.content || []).map(cleanBanner)
+            };
         }
-        return data.content || [];
+        return (data.content || []).map(cleanBanner);
     } catch (error) {
         console.error("Error fetching banners:", error);
         if (page !== undefined && size !== undefined) {
@@ -346,7 +372,11 @@ export const fetchDisplayBanners = async (): Promise<any[]> => {
     try {
         const response = await fetch(`${API_BASE_URL}/v1/display-banners`);
         if (!response.ok) throw new Error("Failed to fetch display banners");
-        return await response.json();
+        const data = await response.json();
+        return (data || []).map((db: any) => ({
+            ...db,
+            banner: db.banner ? { ...db.banner, imageUrl: getCleanImageUrl(db.banner.imageUrl) } : null
+        }));
     } catch (error) {
         console.error("Error fetching display banners:", error);
         return [];

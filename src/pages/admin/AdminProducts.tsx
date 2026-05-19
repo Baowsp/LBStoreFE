@@ -100,7 +100,7 @@ export const AdminProducts = () => {
               className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-l-xl outline-none focus:ring-2 focus:ring-red-500 text-sm font-medium"
             />
           </div>
-          <button 
+          <button
             onClick={() => {
               setCurrentPage(0);
               setActiveSearchTerm(searchTerm);
@@ -112,7 +112,7 @@ export const AdminProducts = () => {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-gray-500">Hiển thị:</span>
-          <select 
+          <select
             value={pageSize}
             onChange={(e) => {
               const newSize = parseInt(e.target.value);
@@ -237,11 +237,11 @@ export const AdminProducts = () => {
 
               <div className="flex items-center gap-2 ml-0 md:ml-4 pl-0 md:pl-4 md:border-l border-gray-200">
                 <span className="text-sm text-gray-500 font-medium">Đến trang:</span>
-                <input 
+                <input
                   key={currentPage}
-                  type="number" 
-                  min={1} 
-                  max={totalPages} 
+                  type="number"
+                  min={1}
+                  max={totalPages}
                   defaultValue={currentPage + 1}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
