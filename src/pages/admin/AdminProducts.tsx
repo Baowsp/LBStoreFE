@@ -156,7 +156,16 @@ export const AdminProducts = () => {
                       <div className="w-16 h-16 rounded-xl border-2 border-gray-100 p-1 bg-white flex items-center justify-center flex-shrink-0 group-hover:border-red-100 transition-colors overflow-hidden">
                         {(product.imageURL || product.image_url) ? (
                           <img
-                            src={(product.imageURL || product.image_url).startsWith('http') ? (product.imageURL || product.image_url) : `http://localhost:8080${product.imageURL || product.image_url}`}
+                            src={(product.imageURL || product.image_url).startsWith('http') ? (product.imageURL || product.image_url) : (() => {
+                              const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+                              if (apiBase.startsWith('/')) return product.imageURL || product.image_url;
+                              try {
+                                const url = new URL(apiBase);
+                                return `${url.protocol}//${url.host}${product.imageURL || product.image_url}`;
+                              } catch {
+                                return `http://localhost:8080${product.imageURL || product.image_url}`;
+                              }
+                            })()}
                             alt={product.name}
                             className="w-full h-full object-cover rounded-lg"
                             onError={e => (e.currentTarget.style.display = 'none')}

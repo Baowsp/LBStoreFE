@@ -23,7 +23,8 @@ export const AdminBannerEdit = () => {
   useEffect(() => {
     const fetchBanner = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/v1/banners/${id}`);
+        const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+        const response = await fetch(`${apiBase}/v1/banners/${id}`);
         if (!response.ok) throw new Error("Failed to fetch banner");
         const data = await response.json();
         setFormData({

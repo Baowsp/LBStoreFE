@@ -22,7 +22,8 @@ export const AdminWarrantyAdd = () => {
     setSaving(true);
     setError('');
     try {
-      const res = await fetch('http://localhost:8080/api/v1/warranty-tickets', {
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+      const res = await fetch(`${apiBase}/v1/warranty-tickets`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -422,7 +422,16 @@ export const AdminProductEdit = () => {
                   <div className="flex flex-col items-center gap-3">
                     <div className="w-24 h-24 border-2 border-dashed border-gray-200 rounded-xl overflow-hidden bg-white flex items-center justify-center relative">
                       {variant.previewURL || variant.imageURL ? (
-                        <img src={variant.previewURL || (variant.imageURL.startsWith('http') ? variant.imageURL : `http://localhost:8080${variant.imageURL}`)} alt="Variant" className="w-full h-full object-contain" />
+                        <img src={variant.previewURL || (variant.imageURL.startsWith('http') ? variant.imageURL : (() => {
+                          const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+                          if (apiBase.startsWith('/')) return variant.imageURL;
+                          try {
+                            const url = new URL(apiBase);
+                            return `${url.protocol}//${url.host}${variant.imageURL}`;
+                          } catch {
+                            return `http://localhost:8080${variant.imageURL}`;
+                          }
+                        })())} alt="Variant" className="w-full h-full object-contain" />
                       ) : (
                         <ImageIcon className="text-gray-200" size={24} />
                       )}

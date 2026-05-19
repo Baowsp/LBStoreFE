@@ -1,6 +1,6 @@
 import { useAuthStore } from '../store/useAuthStore';
 
-const BASE = 'http://localhost:8080/api';
+const BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
 /**
  * Kiểm tra JWT token đã hết hạn chưa

@@ -105,7 +105,16 @@ export const AdminOrderDetail = () => {
                 <div key={i} className="p-4 flex gap-4 items-center">
                   <div className="w-16 h-16 border rounded-lg p-1 flex-shrink-0 bg-gray-50 flex items-center justify-center">
                     {item.variant?.imageURL ? (
-                      <img src={item.variant.imageURL.startsWith('http') ? item.variant.imageURL : `http://localhost:8080${item.variant.imageURL}`} className="w-full h-full object-contain" alt="" />
+                      <img src={item.variant.imageURL.startsWith('http') ? item.variant.imageURL : (() => {
+                        const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+                        if (apiBase.startsWith('/')) return item.variant.imageURL;
+                        try {
+                          const url = new URL(apiBase);
+                          return `${url.protocol}//${url.host}${item.variant.imageURL}`;
+                        } catch {
+                          return `http://localhost:8080${item.variant.imageURL}`;
+                        }
+                      })()} className="w-full h-full object-contain" alt="" />
                     ) : <span className="text-2xl">📦</span>}
                   </div>
                   <div className="flex-1">
