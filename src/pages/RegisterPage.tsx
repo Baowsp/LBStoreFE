@@ -7,10 +7,21 @@ import { RegisterOtpStep } from '../components/register/RegisterOtpStep';
 
 type Step = 'form' | 'otp';
 
+const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export const RegisterPage = () => {
   const [step, setStep] = useState<Step>('form');
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
+    fullName: '',
+    phone: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  const [fieldErrors, setFieldErrors] = useState({
     fullName: '',
     phone: '',
     email: '',
@@ -32,6 +43,46 @@ export const RegisterPage = () => {
     return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
   }, []);
 
+  // Real-time validation từng field
+  const validateField = (name: string, value: string, currentForm?: typeof formData) => {
+    const data = currentForm ?? formData;
+    let error = '';
+    switch (name) {
+      case 'fullName':
+        if (value.trim().length > 0 && value.trim().length < 2)
+          error = 'Họ và tên quá ngắn.';
+        break;
+      case 'phone':
+        if (value.length > 0 && !phoneRegex.test(value))
+          error = 'Số điện thoại không hợp lệ (10 chữ số đầu mạng VN).';
+        break;
+      case 'email':
+        if (value.length > 0 && !emailRegex.test(value))
+          error = 'Email không đúng định dạng.';
+        break;
+      case 'password':
+        if (value.length > 0 && value.length < 6)
+          error = 'Mật khẩu phải có ít nhất 6 ký tự.';
+        // Kiểm tra lại confirmPassword nếu đã nhập
+        if (data.confirmPassword && value !== data.confirmPassword)
+          setFieldErrors(prev => ({ ...prev, confirmPassword: 'Mật khẩu xác nhận không khớp.' }));
+        else if (data.confirmPassword)
+          setFieldErrors(prev => ({ ...prev, confirmPassword: '' }));
+        break;
+      case 'confirmPassword':
+        if (value.length > 0 && value !== data.password)
+          error = 'Mật khẩu xác nhận không khớp.';
+        break;
+    }
+    setFieldErrors(prev => ({ ...prev, [name]: error }));
+  };
+
+  const handleFieldChange = (name: string, value: string) => {
+    const newForm = { ...formData, [name]: value };
+    setFormData(newForm);
+    validateField(name, value, newForm);
+  };
+
   const startCountdown = () => {
     setCountdown(60);
     if (countdownRef.current) clearInterval(countdownRef.current);
@@ -51,28 +102,16 @@ export const RegisterPage = () => {
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (formData.fullName.trim().length < 2) {
-      setErrorMsg('Họ và tên quá ngắn. Vui lòng nhập tên thật của bạn.');
-      return;
-    }
-    const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
-    if (!phoneRegex.test(formData.phone)) {
-      setErrorMsg('Số điện thoại không hợp lệ! Vui lòng nhập 10 chữ số đầu mạng VN.');
-      return;
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setErrorMsg('Email không đúng định dạng hợp lệ!');
-      return;
-    }
-    if (formData.password.length < 6) {
-      setErrorMsg('Mật khẩu phải chứa ít nhất 6 ký tự!');
-      return;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      setErrorMsg('Mật khẩu xác nhận không khớp!');
-      return;
-    }
+    // Validate toàn bộ trước khi submit
+    const errors = {
+      fullName: formData.fullName.trim().length < 2 ? 'Họ và tên quá ngắn. Vui lòng nhập tên thật.' : '',
+      phone: !phoneRegex.test(formData.phone) ? 'Số điện thoại không hợp lệ (10 chữ số đầu mạng VN).' : '',
+      email: !emailRegex.test(formData.email) ? 'Email không đúng định dạng.' : '',
+      password: formData.password.length < 6 ? 'Mật khẩu phải có ít nhất 6 ký tự.' : '',
+      confirmPassword: formData.password !== formData.confirmPassword ? 'Mật khẩu xác nhận không khớp.' : '',
+    };
+    setFieldErrors(errors);
+    if (Object.values(errors).some(e => e !== '')) return;
 
     setIsLoading(true);
     try {
@@ -137,7 +176,8 @@ export const RegisterPage = () => {
         {step === 'form' && (
           <RegisterFormStep 
             formData={formData}
-            setFormData={setFormData}
+            onFieldChange={handleFieldChange}
+            fieldErrors={fieldErrors}
             showPassword={showPassword}
             setShowPassword={setShowPassword}
             handleSendOtp={handleSendOtp}

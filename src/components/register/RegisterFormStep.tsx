@@ -1,10 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { UserPlus, User, Phone, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { UserPlus, User, Phone, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react';
+
+interface FieldErrors {
+  fullName: string;
+  phone: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 
 interface RegisterFormStepProps {
   formData: any;
-  setFormData: (data: any) => void;
+  onFieldChange: (name: string, value: string) => void;
+  fieldErrors: FieldErrors;
   showPassword: boolean;
   setShowPassword: (show: boolean) => void;
   handleSendOtp: (e: React.FormEvent) => void;
@@ -12,9 +21,39 @@ interface RegisterFormStepProps {
   errorMsg: string;
 }
 
-export const RegisterFormStep = ({ 
-  formData, setFormData, showPassword, setShowPassword, 
-  handleSendOtp, isLoading, errorMsg 
+// Component hiển thị lỗi / thành công realtime dưới input
+const FieldMessage = ({ error, value }: { error: string; value: string }) => {
+  if (error) {
+    return (
+      <p className="flex items-center gap-1 text-[11px] text-red-500 font-semibold ml-2 mt-1 animate-fade-in">
+        <AlertCircle size={11} />
+        {error}
+      </p>
+    );
+  }
+  if (value) {
+    return (
+      <p className="flex items-center gap-1 text-[11px] text-green-500 font-semibold ml-2 mt-1 animate-fade-in">
+        <CheckCircle2 size={11} />
+        Hợp lệ
+      </p>
+    );
+  }
+  return null;
+};
+
+// Helper: border class theo trạng thái field
+const inputClass = (error: string, value: string) => {
+  const base = 'w-full pl-12 pr-4 py-3 bg-gray-50 border rounded-2xl outline-none transition-all text-sm font-bold';
+  if (error) return `${base} border-red-400 focus:ring-2 focus:ring-red-400 bg-red-50/30`;
+  if (value) return `${base} border-green-400 focus:ring-2 focus:ring-green-400 focus:bg-white`;
+  return `${base} border-gray-100 focus:ring-2 focus:ring-red-500 focus:bg-white`;
+};
+
+export const RegisterFormStep = ({
+  formData, onFieldChange, fieldErrors,
+  showPassword, setShowPassword,
+  handleSendOtp, isLoading, errorMsg
 }: RegisterFormStepProps) => {
   return (
     <>
@@ -34,70 +73,95 @@ export const RegisterFormStep = ({
           </div>
         )}
 
-        <div className="md:col-span-2 space-y-1.5">
+        {/* Họ và tên */}
+        <div className="md:col-span-2 space-y-0.5">
           <label className="text-[10px] font-black text-gray-400 uppercase ml-2 tracking-widest">Họ và tên</label>
           <div className="relative">
-            <User className="absolute left-4 top-3 text-gray-400" size={18} />
+            <User
+              className={`absolute left-4 top-3 transition-colors ${fieldErrors.fullName ? 'text-red-400' : formData.fullName ? 'text-green-400' : 'text-gray-400'}`}
+              size={18}
+            />
             <input
               type="text" required placeholder="Nguyễn Văn A" value={formData.fullName}
-              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all text-sm font-bold"
-              onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+              className={inputClass(fieldErrors.fullName, formData.fullName)}
+              onChange={(e) => onFieldChange('fullName', e.target.value)}
             />
           </div>
+          <FieldMessage error={fieldErrors.fullName} value={formData.fullName} />
         </div>
 
-        <div className="space-y-1.5">
+        {/* Số điện thoại */}
+        <div className="space-y-0.5">
           <label className="text-[10px] font-black text-gray-400 uppercase ml-2 tracking-widest">Số điện thoại</label>
           <div className="relative">
-            <Phone className="absolute left-4 top-3 text-gray-400" size={18} />
+            <Phone
+              className={`absolute left-4 top-3 transition-colors ${fieldErrors.phone ? 'text-red-400' : formData.phone ? 'text-green-400' : 'text-gray-400'}`}
+              size={18}
+            />
             <input
               type="tel" required placeholder="0987xxxxxx" value={formData.phone}
-              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all text-sm font-bold"
-              onChange={(e) => setFormData({...formData, phone: e.target.value})}
+              className={inputClass(fieldErrors.phone, formData.phone)}
+              onChange={(e) => onFieldChange('phone', e.target.value)}
             />
           </div>
+          <FieldMessage error={fieldErrors.phone} value={formData.phone} />
         </div>
 
-        <div className="space-y-1.5">
+        {/* Email */}
+        <div className="space-y-0.5">
           <label className="text-[10px] font-black text-gray-400 uppercase ml-2 tracking-widest">Email</label>
           <div className="relative">
-            <Mail className="absolute left-4 top-3 text-gray-400" size={18} />
+            <Mail
+              className={`absolute left-4 top-3 transition-colors ${fieldErrors.email ? 'text-red-400' : formData.email ? 'text-green-400' : 'text-gray-400'}`}
+              size={18}
+            />
             <input
               type="email" required placeholder="name@gmail.com" value={formData.email}
-              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all text-sm font-bold"
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              className={inputClass(fieldErrors.email, formData.email)}
+              onChange={(e) => onFieldChange('email', e.target.value)}
             />
           </div>
+          <FieldMessage error={fieldErrors.email} value={formData.email} />
         </div>
 
-        <div className="space-y-1.5">
+        {/* Mật khẩu */}
+        <div className="space-y-0.5">
           <label className="text-[10px] font-black text-gray-400 uppercase ml-2 tracking-widest">Mật khẩu</label>
           <div className="relative">
-            <Lock className="absolute left-4 top-3 text-gray-400" size={18} />
+            <Lock
+              className={`absolute left-4 top-3 transition-colors ${fieldErrors.password ? 'text-red-400' : formData.password ? 'text-green-400' : 'text-gray-400'}`}
+              size={18}
+            />
             <input
               type={showPassword ? 'text' : 'password'} required placeholder="••••••••" value={formData.password}
-              className="w-full pl-12 pr-10 py-3 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all text-sm font-bold"
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
+              className={inputClass(fieldErrors.password, formData.password)}
+              onChange={(e) => onFieldChange('password', e.target.value)}
             />
           </div>
+          <FieldMessage error={fieldErrors.password} value={formData.password} />
         </div>
 
-        <div className="space-y-1.5">
+        {/* Xác nhận mật khẩu */}
+        <div className="space-y-0.5">
           <label className="text-[10px] font-black text-gray-400 uppercase ml-2 tracking-widest">Xác nhận lại</label>
           <div className="relative">
-            <Lock className="absolute left-4 top-3 text-gray-400" size={18} />
+            <Lock
+              className={`absolute left-4 top-3 transition-colors ${fieldErrors.confirmPassword ? 'text-red-400' : formData.confirmPassword ? 'text-green-400' : 'text-gray-400'}`}
+              size={18}
+            />
             <input
               type={showPassword ? 'text' : 'password'} required placeholder="••••••••" value={formData.confirmPassword}
-              className="w-full pl-12 pr-10 py-3 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all text-sm font-bold"
-              onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+              className={`${inputClass(fieldErrors.confirmPassword, formData.confirmPassword)} pr-10`}
+              onChange={(e) => onFieldChange('confirmPassword', e.target.value)}
             />
             <button
               type="button" onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-3 text-gray-400"
+              className="absolute right-4 top-3 text-gray-400 hover:text-gray-600 transition-colors"
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
+          <FieldMessage error={fieldErrors.confirmPassword} value={formData.confirmPassword} />
         </div>
 
         <div className="md:col-span-2 pt-4">

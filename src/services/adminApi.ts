@@ -3,18 +3,15 @@ import { useAuthStore } from '../store/useAuthStore';
 const BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
 /**
- * Helper: Hỗ trợ tự động chuyển đổi URL hình ảnh từ localhost thành URL VPS/Backend thực tế
+ * Helper: Chuyển mọi URL ảnh backend (localhost hoặc IP thật) thành đường dẫn
+ * tương đối /uploads/... để Vercel proxy xử lý (tránh Mixed Content & CORS)
  */
 export const getCleanImageUrl = (url: string | null | undefined): string => {
   if (!url) return '';
-  if (url.startsWith('http://localhost:8080/uploads/')) {
-    try {
-      const parsedBase = new URL(BASE);
-      const backendOrigin = `${parsedBase.protocol}//${parsedBase.host}`;
-      return url.replace('http://localhost:8080', backendOrigin);
-    } catch {
-      return url;
-    }
+  // Nếu là URL ảnh từ backend (localhost hoặc IP VPS), chuyển thành /uploads/...
+  const match = url.match(/\/uploads\/(.+)$/);
+  if (match) {
+    return `/uploads/${match[1]}`;
   }
   return url;
 };

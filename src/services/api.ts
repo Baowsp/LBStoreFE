@@ -4,18 +4,15 @@ import { useAuthStore } from '../store/useAuthStore';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
 /**
- * Helper: Hỗ trợ tự động chuyển đổi URL hình ảnh từ localhost thành URL VPS/Backend thực tế
+ * Helper: Chuyển mọi URL ảnh backend (localhost hoặc IP thật) thành đường dẫn
+ * tương đối /uploads/... để Vercel proxy xử lý (tránh Mixed Content & CORS)
  */
 export const getCleanImageUrl = (url: string | null | undefined): string => {
     if (!url) return '';
-    if (url.startsWith('http://localhost:8080/uploads/')) {
-        try {
-            const parsedBase = new URL(API_BASE_URL);
-            const backendOrigin = `${parsedBase.protocol}//${parsedBase.host}`;
-            return url.replace('http://localhost:8080', backendOrigin);
-        } catch {
-            return url;
-        }
+    // Nếu là URL ảnh từ backend (localhost hoặc IP VPS), chuyển thành /uploads/...
+    const match = url.match(/\/uploads\/(.+)$/);
+    if (match) {
+        return `/uploads/${match[1]}`;
     }
     return url;
 };
@@ -295,24 +292,38 @@ export const fetchBanners = async (page?: number, size?: number): Promise<any> =
     try {
         const p = page !== undefined ? page : 0;
         const s = size !== undefined ? size : 9999;
-        const response = await fetch(`${API_BASE_URL}/v1/banners?page=${p}&size=${s}`);
+        const url = `${API_BASE_URL}/v1/banners?page=${p}&size=${s}`;
+        console.log('[fetchBanners] Gọi API:', url);
+
+        const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`Failed to fetch banners: ${response.status}`);
         }
         const data = await response.json();
+        console.log('[fetchBanners] Raw data từ API:', data);
+
         const cleanBanner = (b: any) => ({
             ...b,
             imageUrl: getCleanImageUrl(b.imageUrl)
         });
+
         if (page !== undefined && size !== undefined) {
-            return {
+            const result = {
                 ...data,
                 content: (data.content || []).map(cleanBanner)
             };
+            console.log('[fetchBanners] Banners sau khi clean URL (paginated):', result.content);
+            return result;
         }
-        return (data.content || []).map(cleanBanner);
+
+        const banners = (data.content || []).map(cleanBanner);
+        console.log('[fetchBanners] Banners sau khi clean URL:', banners);
+        banners.forEach((b: any, i: number) => {
+            console.log(`  [${i}] id=${b.id} | position=${b.position} | imageUrl=${b.imageUrl}`);
+        });
+        return banners;
     } catch (error) {
-        console.error("Error fetching banners:", error);
+        console.error('[fetchBanners] Lỗi:', error);
         if (page !== undefined && size !== undefined) {
             return { content: [], totalPages: 0, totalElements: 0, size: size, number: page };
         }
