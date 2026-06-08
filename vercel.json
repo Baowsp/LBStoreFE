@@ -9,6 +9,10 @@
             "destination": "http://103.161.171.232:8080/uploads/:path*"
         },
         {
+            "source": "/ws/chat/:path*",
+            "destination": "http://103.161.171.232:8080/ws/chat/:path*"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
