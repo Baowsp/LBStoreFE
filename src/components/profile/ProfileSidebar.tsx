@@ -10,7 +10,6 @@ export const ProfileSidebar = ({ userInfo, activeTab, setActiveTab }: ProfileSid
   const menuItems = [
     { id: 'account', icon: <User size={20} />, label: "Thông tin tài khoản" },
     { id: 'orders', icon: <Package size={20} />, label: "Lịch sử mua hàng" },
-    { id: 'warranty', icon: <ShieldCheck size={20} />, label: "Tra cứu bảo hành" },
     { id: 'address', icon: <MapPin size={20} />, label: "Sổ địa chỉ" },
     { id: 'password', icon: <Lock size={20} />, label: "Đổi mật khẩu" },
   ];
@@ -37,9 +36,8 @@ export const ProfileSidebar = ({ userInfo, activeTab, setActiveTab }: ProfileSid
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id)}
-            className={`w-full flex items-center justify-between px-6 py-4 transition-all ${
-              activeTab === item.id ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'
-            }`}
+            className={`w-full flex items-center justify-between px-6 py-4 transition-all ${activeTab === item.id ? 'bg-red-50 text-red-600' : 'text-gray-600 hover:bg-gray-50'
+              }`}
           >
             <div className="flex items-center gap-4">
               <span className={activeTab === item.id ? 'text-red-600' : 'text-gray-400'}>{item.icon}</span>

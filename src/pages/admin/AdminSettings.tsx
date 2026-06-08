@@ -47,10 +47,10 @@ const SectionCard = ({
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export const AdminSettings = () => {
-  const [loading, setLoading]   = useState(true);
-  const [saving,  setSaving]    = useState(false);
-  const [saved,   setSaved]     = useState(false);
-  const [error,   setError]     = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState('');
 
   const [settings, setSettings] = useState<DisplaySettings>({ ...DEFAULT_DISPLAY_SETTINGS });
 
@@ -100,13 +100,12 @@ export const AdminSettings = () => {
         </div>
         <div>
           <h1 className="text-2xl font-black text-gray-800">Cài đặt hiển thị</h1>
-          <p className="text-gray-400 text-xs mt-0.5">Tùy chỉnh lưới sản phẩm — lưu vào CSDL</p>
         </div>
       </div>
 
       {/* Trang chủ */}
       <SectionCard icon={<Monitor size={18} />} title="Trang chủ — Danh mục sản phẩm" color="bg-gradient-to-r from-blue-600 to-indigo-600">
-        <NumInput label="Số cột hiển thị"  value={settings.home_cols} min={2} max={6} onChange={set('home_cols')} unit="cột" />
+        <NumInput label="Số cột hiển thị" value={settings.home_cols} min={2} max={6} onChange={set('home_cols')} unit="cột" />
         <NumInput label="Số hàng hiển thị" value={settings.home_rows} min={1} max={8} onChange={set('home_rows')} unit="hàng" />
         <div className="py-3">
           <p className="text-xs text-gray-400">⚡ Tối đa <strong className="text-gray-600">{settings.home_cols * settings.home_rows}</strong> sản phẩm / danh mục.</p>
@@ -115,8 +114,8 @@ export const AdminSettings = () => {
 
       {/* Tìm kiếm */}
       <SectionCard icon={<Search size={18} />} title="Trang tìm kiếm" color="bg-gradient-to-r from-violet-600 to-purple-600">
-        <NumInput label="Số cột hiển thị"  value={settings.search_cols} min={2} max={6} onChange={set('search_cols')} unit="cột" />
-        <NumInput label="Số hàng / trang"  value={settings.search_rows} min={1} max={10} onChange={set('search_rows')} unit="hàng" />
+        <NumInput label="Số cột hiển thị" value={settings.search_cols} min={2} max={6} onChange={set('search_cols')} unit="cột" />
+        <NumInput label="Số hàng / trang" value={settings.search_rows} min={1} max={10} onChange={set('search_rows')} unit="hàng" />
         <div className="py-3">
           <p className="text-xs text-gray-400">⚡ Tối đa <strong className="text-gray-600">{settings.search_cols * settings.search_rows}</strong> sản phẩm / trang.</p>
         </div>
@@ -124,7 +123,7 @@ export const AdminSettings = () => {
 
       {/* Khuyến mãi (Trang chủ) */}
       <SectionCard icon={<Tag size={18} />} title="Section khuyến mãi — Trang chủ" color="bg-gradient-to-r from-red-600 to-orange-500">
-        <NumInput label="Số cột sản phẩm"  value={settings.promo_cols} min={2} max={6} onChange={set('promo_cols')} unit="cột" />
+        <NumInput label="Số cột sản phẩm" value={settings.promo_cols} min={2} max={6} onChange={set('promo_cols')} unit="cột" />
         <NumInput label="Số hàng sản phẩm" value={settings.promo_rows} min={1} max={10} onChange={set('promo_rows')} unit="hàng" />
         <div className="py-3">
           <p className="text-xs text-gray-400">⚡ Mỗi chương trình khuyến mãi trên trang chủ hiển thị tối đa <strong className="text-gray-600">{settings.promo_cols * settings.promo_rows}</strong> sản phẩm.</p>
@@ -133,8 +132,8 @@ export const AdminSettings = () => {
 
       {/* Trang chi tiết khuyến mãi */}
       <SectionCard icon={<Tag size={18} />} title="Trang chi tiết khuyến mãi" color="bg-gradient-to-r from-pink-600 to-rose-500">
-        <NumInput label="Số cột hiển thị"  value={settings.promoted_page_cols} min={2} max={6} onChange={set('promoted_page_cols')} unit="cột" />
-        <NumInput label="Số hàng / trang"  value={settings.promoted_page_rows} min={1} max={10} onChange={set('promoted_page_rows')} unit="hàng" />
+        <NumInput label="Số cột hiển thị" value={settings.promoted_page_cols} min={2} max={6} onChange={set('promoted_page_cols')} unit="cột" />
+        <NumInput label="Số hàng / trang" value={settings.promoted_page_rows} min={1} max={10} onChange={set('promoted_page_rows')} unit="hàng" />
         <div className="py-3">
           <p className="text-xs text-gray-400">⚡ Mỗi trang chi tiết khuyến mãi hiển thị tối đa <strong className="text-gray-600">{settings.promoted_page_cols * settings.promoted_page_rows}</strong> sản phẩm.</p>
         </div>
@@ -165,13 +164,7 @@ export const AdminSettings = () => {
         </button>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
-        <p className="text-blue-700 text-sm font-semibold flex items-start gap-2">
-          <LayoutGrid size={16} className="flex-shrink-0 mt-0.5" />
-          Cài đặt được lưu vào bảng <code className="bg-blue-100 px-1 rounded text-xs">display_settings</code> trong CSDL.
-          Áp dụng ngay cho tất cả người dùng sau khi họ tải lại trang.
-        </p>
-      </div>
+
     </div>
   );
 };

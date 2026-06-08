@@ -12,10 +12,10 @@ const STATUS_VI: Record<string, string> = {
 };
 
 const STATUS_BUTTONS = [
-  { key: 'PENDING', label: 'Chờ xử lý', icon: <Clock size={18}/>, cls: 'bg-yellow-100 text-yellow-700 ring-yellow-500' },
-  { key: 'SHIPPING', label: 'Đang giao hàng', icon: <Truck size={18}/>, cls: 'bg-blue-100 text-blue-700 ring-blue-500' },
-  { key: 'DELIVERED', label: 'Hoàn thành', icon: <CheckCircle size={18}/>, cls: 'bg-green-100 text-green-700 ring-green-500' },
-  { key: 'CANCELLED', label: 'Đã hủy', icon: <XCircle size={18}/>, cls: 'bg-red-100 text-red-700 ring-red-500' },
+  { key: 'PENDING', label: 'Chờ xử lý', icon: <Clock size={18} />, cls: 'bg-yellow-100 text-yellow-700 ring-yellow-500' },
+  { key: 'SHIPPING', label: 'Đang giao hàng', icon: <Truck size={18} />, cls: 'bg-blue-100 text-blue-700 ring-blue-500' },
+  { key: 'DELIVERED', label: 'Hoàn thành', icon: <CheckCircle size={18} />, cls: 'bg-green-100 text-green-700 ring-green-500' },
+  { key: 'CANCELLED', label: 'Đã hủy', icon: <XCircle size={18} />, cls: 'bg-red-100 text-red-700 ring-red-500' },
 ];
 
 export const AdminOrderDetail = () => {
@@ -52,7 +52,7 @@ export const AdminOrderDetail = () => {
         alert('Cập nhật thất bại: ' + updated.error);
         return;
       }
-      setOrder((prev: any) => ({...prev, status: updated?.status ?? newStatus}));
+      setOrder((prev: any) => ({ ...prev, status: updated?.status ?? newStatus }));
     } catch (e: any) {
       alert('Cập nhật thất bại: ' + e.message);
     } finally {
@@ -105,7 +105,7 @@ export const AdminOrderDetail = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-100">
-              <h3 className="font-bold text-gray-800 flex items-center gap-2"><Package size={18}/> Sản phẩm ({details.length})</h3>
+              <h3 className="font-bold text-gray-800 flex items-center gap-2"><Package size={18} /> Sản phẩm ({details.length})</h3>
             </div>
             <div className="divide-y divide-gray-50">
               {details.length === 0 ? (
@@ -172,11 +172,10 @@ export const AdminOrderDetail = () => {
                     onClick={() => handleStatusChange(btn.key)}
                     disabled={updating || isCancelBlocked}
                     title={isCancelBlocked ? 'Không thể hủy đơn hàng đã hoàn thành' : undefined}
-                    className={`w-full p-3 rounded-xl text-sm font-bold flex items-center gap-3 transition-all ${
-                      order.status === btn.key ? `${btn.cls} ring-2` :
-                      isCancelBlocked ? 'bg-gray-100 text-gray-300 cursor-not-allowed' :
-                      'bg-gray-50 text-gray-500 hover:bg-gray-100'
-                    } disabled:opacity-60`}
+                    className={`w-full p-3 rounded-xl text-sm font-bold flex items-center gap-3 transition-all ${order.status === btn.key ? `${btn.cls} ring-2` :
+                        isCancelBlocked ? 'bg-gray-100 text-gray-300 cursor-not-allowed' :
+                          'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                      } disabled:opacity-60`}
                   >
                     {btn.icon} {btn.label}
                     {isCancelBlocked && <span className="ml-auto text-[10px] font-normal text-gray-400">Không khả dụng</span>}
@@ -191,21 +190,21 @@ export const AdminOrderDetail = () => {
             <h3 className="font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2">Thông tin giao hàng</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <div className="bg-gray-100 p-2 rounded-full"><MapPin size={16} className="text-gray-600"/></div>
+                <div className="bg-gray-100 p-2 rounded-full"><MapPin size={16} className="text-gray-600" /></div>
                 <div>
                   <p className="text-xs text-gray-400 font-bold uppercase">Địa chỉ nhận hàng</p>
                   <p className="text-sm font-medium text-gray-800 mt-1">{order.shippingAddressText ?? 'N/A'}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="bg-gray-100 p-2 rounded-full"><Phone size={16} className="text-gray-600"/></div>
+                <div className="bg-gray-100 p-2 rounded-full"><Phone size={16} className="text-gray-600" /></div>
                 <div>
                   <p className="text-xs text-gray-400 font-bold uppercase">Người nhận</p>
                   <p className="text-sm font-medium text-gray-800 mt-1">{order.shippingName} – {order.shippingPhone}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="bg-gray-100 p-2 rounded-full"><CreditCard size={16} className="text-gray-600"/></div>
+                <div className="bg-gray-100 p-2 rounded-full"><CreditCard size={16} className="text-gray-600" /></div>
                 <div>
                   <p className="text-xs text-gray-400 font-bold uppercase">Thanh toán</p>
                   <p className="text-sm font-medium text-gray-800 mt-1">{order.paymentMethod}</p>
@@ -234,7 +233,7 @@ export const AdminOrderDetail = () => {
                 </div>
                 {order.deliveryEmployee.employee?.user?.phoneNumber && (
                   <div className="flex items-center gap-3">
-                    <div className="bg-gray-100 p-2 rounded-full"><Phone size={16} className="text-gray-600"/></div>
+                    <div className="bg-gray-100 p-2 rounded-full"><Phone size={16} className="text-gray-600" /></div>
                     <div>
                       <p className="text-xs text-gray-400 font-bold uppercase">Số điện thoại</p>
                       <p className="text-sm font-medium text-gray-800 mt-0.5">

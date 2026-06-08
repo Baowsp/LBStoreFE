@@ -608,10 +608,7 @@ export const PromotionForm = ({
                         </p>
                     )}
 
-                    <p className="text-xs text-blue-500 font-medium bg-blue-50 rounded-lg px-3 py-2">
-                        ℹ️ Mỗi sản phẩm chỉ được 1 promotion trong cùng khoảng thời gian.
-                        Hệ thống sẽ báo lỗi nếu trùng lịch.
-                    </p>
+
                 </div>
 
                 {/* Submit */}

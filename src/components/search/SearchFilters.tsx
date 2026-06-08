@@ -31,7 +31,7 @@ export const SearchFilters = ({
         <Filter size={16} /> Áp dụng
       </button>
 
-      <div className="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
+      {/* <div className="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
         <span className="text-xs font-bold text-gray-400 uppercase">Hiển thị</span>
         <select
           value={itemsPerPage}
@@ -43,7 +43,7 @@ export const SearchFilters = ({
           <option value="50">50 cái</option>
           <option value="100">100 cái</option>
         </select>
-      </div>
+      </div> */}
 
       <div className="md:ml-auto flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
         <ArrowUpDown size={16} className="text-gray-400" />

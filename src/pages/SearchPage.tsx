@@ -14,7 +14,10 @@ export const SearchPage = () => {
   const query = searchParams.get('q') || '';
   const categorySlug = searchParams.get('category') || '';
   const currentPage = parseInt(searchParams.get('page') || '1') - 1;
-  const itemsPerPage = parseInt(searchParams.get('size') || '20');
+
+  const [cols, setCols] = useState(() => readDisplaySetting('search_cols'));
+  const [rows, setRows] = useState(() => readDisplaySetting('search_rows'));
+  const itemsPerPage = cols * rows;
 
   const [products, setProducts] = useState<Product[]>([]);
   const [pagination, setPagination] = useState({ totalPages: 0, totalElements: 0 });
@@ -24,9 +27,6 @@ export const SearchPage = () => {
   const [tempCategory, setTempCategory] = useState('Tất cả');
   const [tempBrand, setTempBrand] = useState('Tất cả');
   const [tempPrice, setTempPrice] = useState('Tất cả');
-
-  const [cols, setCols] = useState(() => readDisplaySetting('search_cols'));
-  const [rows, setRows] = useState(() => readDisplaySetting('search_rows'));
 
   const [appliedFilters, setAppliedFilters] = useState({
     category: 'Tất cả',
@@ -88,7 +88,10 @@ export const SearchPage = () => {
     setTempBrand('Tất cả');
     setTempPrice('Tất cả');
     setAppliedFilters({ category: 'Tất cả', brand: 'Tất cả', price: 'Tất cả' });
-    updateURL({ page: 1, size: 20 });
+    const updated = new URLSearchParams(searchParams);
+    updated.delete('size');
+    updated.set('page', '1');
+    setSearchParams(updated);
   };
 
   const finalProducts = useMemo(() => {

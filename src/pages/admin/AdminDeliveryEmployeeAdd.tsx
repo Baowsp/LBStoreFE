@@ -67,16 +67,16 @@ export const AdminDeliveryEmployeeAdd = () => {
       </div>
 
       {/* Info note */}
-      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3">
-        <Info size={18} className="text-blue-500 flex-shrink-0 mt-0.5" />
-        <div>
-          <p className="text-blue-800 font-bold text-sm">Tài khoản tự động</p>
-          <p className="text-blue-600 text-xs mt-0.5">
-            Hệ thống sẽ tự tạo tài khoản cho nhân viên. Mật khẩu mặc định: <span className="font-mono font-bold">Shipper@123</span>
-            {form.email ? '' : <> · Email sẽ được tự sinh nếu để trống.</>}
-          </p>
-        </div>
+      {/* <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3">
+      <Info size={18} className="text-blue-500 flex-shrink-0 mt-0.5" />
+      <div>
+        <p className="text-blue-800 font-bold text-sm">Tài khoản tự động</p>
+        <p className="text-blue-600 text-xs mt-0.5">
+          Hệ thống sẽ tự tạo tài khoản cho nhân viên. Mật khẩu mặc định: <span className="font-mono font-bold">Shipper@123</span>
+          {form.email ? '' : <> · Email sẽ được tự sinh nếu để trống.</>}
+        </p>
       </div>
+    </div> */}
 
       <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 space-y-6">
         {error && (
@@ -138,7 +138,7 @@ export const AdminDeliveryEmployeeAdd = () => {
                   type="email"
                   value={form.email}
                   onChange={e => set('email', e.target.value)}
-                  placeholder="VD: shipper@gmail.com (để trống = tự sinh)"
+                  placeholder="VD: shipper@gmail.com"
                   className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
