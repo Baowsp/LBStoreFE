@@ -38,11 +38,20 @@ export const AdminOrderDetail = () => {
   }, [id]);
 
   const handleStatusChange = async (newStatus: string) => {
+    // Không cho phép hủy đơn đã hoàn thành
+    if (newStatus === 'CANCELLED' && order.status === 'DELIVERED') {
+      alert('Không thể hủy đơn hàng đã hoàn thành!');
+      return;
+    }
     const label = STATUS_VI[newStatus] ?? newStatus;
     if (!window.confirm(`Chuyển trạng thái sang "${label}"?`)) return;
     setUpdating(true);
     try {
       const updated = await adminUpdateOrderStatus(id!, newStatus);
+      if (updated?.error) {
+        alert('Cập nhật thất bại: ' + updated.error);
+        return;
+      }
       setOrder((prev: any) => ({...prev, status: updated?.status ?? newStatus}));
     } catch (e: any) {
       alert('Cập nhật thất bại: ' + e.message);
@@ -155,17 +164,25 @@ export const AdminOrderDetail = () => {
               {updating && <Loader size={16} className="animate-spin text-gray-400" />}
             </h3>
             <div className="space-y-2">
-              {STATUS_BUTTONS.map(btn => (
-                <button key={btn.key}
-                  onClick={() => handleStatusChange(btn.key)}
-                  disabled={updating}
-                  className={`w-full p-3 rounded-xl text-sm font-bold flex items-center gap-3 transition-all ${
-                    order.status === btn.key ? `${btn.cls} ring-2` : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-                  } disabled:opacity-60`}
-                >
-                  {btn.icon} {btn.label}
-                </button>
-              ))}
+              {STATUS_BUTTONS.map(btn => {
+                const isDelivered = order.status === 'DELIVERED';
+                const isCancelBlocked = btn.key === 'CANCELLED' && isDelivered;
+                return (
+                  <button key={btn.key}
+                    onClick={() => handleStatusChange(btn.key)}
+                    disabled={updating || isCancelBlocked}
+                    title={isCancelBlocked ? 'Không thể hủy đơn hàng đã hoàn thành' : undefined}
+                    className={`w-full p-3 rounded-xl text-sm font-bold flex items-center gap-3 transition-all ${
+                      order.status === btn.key ? `${btn.cls} ring-2` :
+                      isCancelBlocked ? 'bg-gray-100 text-gray-300 cursor-not-allowed' :
+                      'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                    } disabled:opacity-60`}
+                  >
+                    {btn.icon} {btn.label}
+                    {isCancelBlocked && <span className="ml-auto text-[10px] font-normal text-gray-400">Không khả dụng</span>}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -196,6 +213,53 @@ export const AdminOrderDetail = () => {
               </div>
             </div>
           </div>
+
+          {/* Nhân viên giao hàng */}
+          {order.deliveryEmployee && (
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+              <h3 className="font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2 flex items-center gap-2">
+                <Truck size={18} className="text-blue-600" /> Nhân viên giao hàng
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-bold text-sm">
+                    {order.deliveryEmployee.employee?.user?.fullName?.charAt(0) ?? '?'}
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 font-bold uppercase">Họ và tên</p>
+                    <p className="text-sm font-bold text-gray-800 mt-0.5">
+                      {order.deliveryEmployee.employee?.user?.fullName ?? 'N/A'}
+                    </p>
+                  </div>
+                </div>
+                {order.deliveryEmployee.employee?.user?.phoneNumber && (
+                  <div className="flex items-center gap-3">
+                    <div className="bg-gray-100 p-2 rounded-full"><Phone size={16} className="text-gray-600"/></div>
+                    <div>
+                      <p className="text-xs text-gray-400 font-bold uppercase">Số điện thoại</p>
+                      <p className="text-sm font-medium text-gray-800 mt-0.5">
+                        {order.deliveryEmployee.employee.user.phoneNumber}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-center gap-3">
+                  <div className="bg-gray-100 p-2 rounded-full flex items-center justify-center w-8 h-8">
+                    <span className="text-xs">
+                      {order.deliveryEmployee.vehicleType === 'MOTORBIKE' ? '🏍️' : '🚛'}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 font-bold uppercase">Phương tiện</p>
+                    <p className="text-sm font-medium text-gray-800 mt-0.5">
+                      {order.deliveryEmployee.vehicleType === 'MOTORBIKE' ? 'Xe máy' : 'Xe tải'}
+                      {order.deliveryEmployee.licensePlate && ` · ${order.deliveryEmployee.licensePlate}`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

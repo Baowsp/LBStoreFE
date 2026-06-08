@@ -9,6 +9,7 @@ type Step = 'form' | 'otp';
 
 const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const nameRegex = /^[a-zA-ZÀ-ỹ\s]+$/;
 
 export const RegisterPage = () => {
   const [step, setStep] = useState<Step>('form');
@@ -49,6 +50,8 @@ export const RegisterPage = () => {
     let error = '';
     switch (name) {
       case 'fullName':
+        if (!nameRegex.test(value))
+          error = 'Họ và tên không hợp lệ.';
         if (value.trim().length > 0 && value.trim().length < 2)
           error = 'Họ và tên quá ngắn.';
         break;

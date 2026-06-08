@@ -1,8 +1,12 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { HomePage } from './pages/HomePage';
 import { CartPage } from './pages/CartPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { SearchPage } from './pages/SearchPage';
+import { PromotionsPage } from './pages/PromotionsPage';
+import { PromotedProductPage } from './pages/PromotedProductPage';
+
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
@@ -33,12 +37,31 @@ import { AdminVouchers } from './pages/admin/AdminVouchers';
 import { AdminVoucherAdd } from './pages/admin/AdminVoucherAdd';
 import { AdminVoucherEdit } from './pages/admin/AdminVoucherEdit';
 import { AdminDisplayBanners } from './pages/admin/AdminDisplayBanners';
+import { AdminPromotions } from './pages/admin/AdminPromotions';
+import { AdminPromotionAdd } from './pages/admin/AdminPromotionAdd';
+import { AdminPromotionEdit } from './pages/admin/AdminPromotionEdit';
+import { AdminSettings } from './pages/admin/AdminSettings';
+import { AdminChat } from './pages/admin/AdminChat';
+import { AdminChatDetail } from './pages/admin/AdminChatDetail';
+import { AdminDeliveryEmployees } from './pages/admin/AdminDeliveryEmployees';
+import { AdminDeliveryEmployeeAdd } from './pages/admin/AdminDeliveryEmployeeAdd';
+import { AdminDeliveryEmployeeEdit } from './pages/admin/AdminDeliveryEmployeeEdit';
 import { AuthGuard } from './components/AuthGuard';
 import { AdminLoginPage } from './pages/AdminLoginPage';
-function App() {
+
+function AppRoutes() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleForceLogout = () => {
+      navigate('/', { replace: true });
+    };
+    window.addEventListener('force-logout', handleForceLogout);
+    return () => window.removeEventListener('force-logout', handleForceLogout);
+  }, [navigate]);
+
   return (
-    <Router>
-      <Routes>
+    <Routes>
         {/* Layout cho khách hàng (có Header/Footer) */}
         <Route element={<PublicLayout />}>
             <Route path="/" element={<HomePage />} />
@@ -49,6 +72,9 @@ function App() {
             <Route path='forgot-password' element= {<ForgotPasswordPage />} />
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/promotions" element={<PromotionsPage />} />
+            <Route path="/promotions/:id" element={<PromotedProductPage />} />
+
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/checkout/success" element={<CheckoutPage />} />
@@ -81,9 +107,25 @@ function App() {
             <Route path="vouchers" element={<AdminVouchers />} />
             <Route path="vouchers/add" element={<AdminVoucherAdd />} />
             <Route path="vouchers/edit/:id" element={<AdminVoucherEdit />} />
+            <Route path="promotions" element={<AdminPromotions />} />
+            <Route path="promotions/add" element={<AdminPromotionAdd />} />
+            <Route path="promotions/edit/:id" element={<AdminPromotionEdit />} />
+            <Route path="settings" element={<AdminSettings />} />
+            <Route path="chat" element={<AdminChat />} />
+            <Route path="chat/:roomId" element={<AdminChatDetail />} />
+            <Route path="delivery-employees" element={<AdminDeliveryEmployees />} />
+            <Route path="delivery-employees/add" element={<AdminDeliveryEmployeeAdd />} />
+            <Route path="delivery-employees/edit/:id" element={<AdminDeliveryEmployeeEdit />} />
           </Route>
         </Route>
       </Routes>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppRoutes />
     </Router>
   );
 }

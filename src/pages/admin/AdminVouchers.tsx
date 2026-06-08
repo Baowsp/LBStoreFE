@@ -1,7 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Edit, Trash2, Search, Tag } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Tag, PlayCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { fetchVouchers, deleteVoucher } from '../../services/api';
+
+type VoucherStatus = 'active' | 'upcoming' | 'expired' | 'disabled';
+
+const getStatus = (v: any): VoucherStatus => {
+    if (!v.isActive) return 'disabled';
+    const now = new Date();
+    const start = v.startDate ? new Date(v.startDate) : new Date(0);
+    const end = v.endDate ? new Date(v.endDate) : new Date(9999, 0, 1);
+    if (now < start) return 'upcoming';
+    if (now > end) return 'expired';
+    return 'active';
+};
+
+const STATUS_CONFIG: Record<VoucherStatus, { label: string; icon: any; cls: string }> = {
+    active:   { label: 'Đang diễn ra', icon: PlayCircle,   cls: 'bg-green-100 text-green-700 border-green-200' },
+    upcoming: { label: 'Sắp tới',      icon: Clock,        cls: 'bg-blue-100 text-blue-700 border-blue-200' },
+    expired:  { label: 'Đã kết thúc',  icon: CheckCircle,  cls: 'bg-gray-100 text-gray-500 border-gray-200' },
+    disabled: { label: 'Đang tắt',     icon: XCircle,      cls: 'bg-red-100 text-red-600 border-red-200' }
+};
+
+const StatusBadge = ({ v }: { v: any }) => {
+    const s = getStatus(v);
+    const config = STATUS_CONFIG[s];
+    const Icon = config.icon;
+    return (
+        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${config.cls}`}>
+            <Icon size={12} />
+            {config.label}
+        </div>
+    );
+};
 
 export const AdminVouchers = () => {
     const [vouchers, setVouchers] = useState<any[]>([]);
@@ -117,9 +148,7 @@ export const AdminVouchers = () => {
                                             )}
                                         </td>
                                         <td className="py-4 px-4">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${v.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                                {v.isActive ? 'Hoạt động' : 'Tạm dừng'}
-                                            </span>
+                                            <StatusBadge v={v} />
                                         </td>
                                         <td className="py-4 px-4 text-right">
                                             <div className="flex justify-end gap-2">

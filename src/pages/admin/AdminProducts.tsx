@@ -23,6 +23,7 @@ export const AdminProducts = () => {
         setProducts(content);
         setTotalElements(totalElements);
         setTotalPages(totalPages);
+        console.log(products);
       })
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
@@ -140,6 +141,7 @@ export const AdminProducts = () => {
                 <th className="px-6 py-4">Danh mục</th>
                 <th className="px-6 py-4">Hãng</th>
                 <th className="px-6 py-4">Số lượng</th>
+                <th className="px-6 py-4">Giá</th>
                 <th className="px-6 py-4 text-right">Hành động</th>
               </tr>
             </thead>
@@ -182,6 +184,7 @@ export const AdminProducts = () => {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600 font-medium">{product.brand?.name ?? product.brand ?? 'N/A'}</td>
                   <td className="px-6 py-4 text-sm text-gray-600 font-medium">{product.stockQuantity ?? product.stock_quantity ?? 'N/A'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600 font-medium">{product.variants?.[0]?.originalPrice?.toLocaleString() || 'N/A'}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button

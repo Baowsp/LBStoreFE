@@ -1,12 +1,27 @@
-import { Package, MapPin, CreditCard, X } from 'lucide-react';
+import { useState } from 'react';
+import { Package, MapPin, CreditCard, X, PackageCheck, Truck } from 'lucide-react';
 
 interface OrderDetailModalProps {
   order: any;
   onClose: () => void;
+  onConfirmDelivered: (orderId: string) => Promise<void>;
 }
 
-export const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
+export const OrderDetailModal = ({ order, onClose, onConfirmDelivered }: OrderDetailModalProps) => {
+  const [confirming, setConfirming] = useState(false);
   if (!order) return null;
+
+  const isShipping = order.status === 'SHIPPING';
+
+  const handleConfirm = async () => {
+    if (!window.confirm('Xác nhận bạn đã nhận được hàng?')) return;
+    setConfirming(true);
+    try {
+      await onConfirmDelivered(order.id);
+    } finally {
+      setConfirming(false);
+    }
+  };
 
   return (
     <div
@@ -128,8 +143,24 @@ export const OrderDetailModal = ({ order, onClose }: OrderDetailModalProps) => {
           </div>
         </div>
 
-        <div className="px-8 py-6 bg-gray-50/50 border-t border-gray-100 text-center">
-          <p className="text-[10px] text-gray-400 font-bold italic uppercase tracking-widest">
+        <div className="px-8 py-6 bg-gray-50/50 border-t border-gray-100">
+          {isShipping && (
+            <div className="mb-4">
+              <div className="flex items-center gap-2 text-purple-600 bg-purple-50 border border-purple-100 rounded-2xl px-4 py-3 mb-3">
+                <Truck size={16} />
+                <span className="text-xs font-black uppercase tracking-wide">Đơn hàng đang trên đường giao đến bạn</span>
+              </div>
+              <button
+                onClick={handleConfirm}
+                disabled={confirming}
+                className="w-full py-4 bg-green-600 text-white font-black text-sm rounded-2xl hover:bg-green-700 transition-all uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-green-100 disabled:opacity-60"
+              >
+                <PackageCheck size={18} />
+                {confirming ? 'Đang xử lý...' : 'Xác nhận đã nhận hàng'}
+              </button>
+            </div>
+          )}
+          <p className="text-[10px] text-gray-400 font-bold italic uppercase tracking-widest text-center">
             Cảm ơn bạn đã tin tưởng chọn mua sản phẩm tại LBStore
           </p>
         </div>

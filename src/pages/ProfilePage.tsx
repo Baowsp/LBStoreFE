@@ -9,7 +9,8 @@ import {
   updateUserProfile,
   changeUserPassword,
   fetchUserById,
-  fetchOnlineOrdersByCustomer
+  fetchOnlineOrdersByCustomer,
+  confirmOrderDelivered
 } from '../services/api';
 
 import { ProfileSidebar } from '../components/profile/ProfileSidebar';
@@ -163,6 +164,20 @@ export const ProfilePage = () => {
     }
   };
 
+  const handleConfirmDelivered = async (orderId: string) => {
+    if (!window.confirm('Xác nhận bạn đã nhận được hàng?')) return;
+    try {
+      await confirmOrderDelivered(orderId);
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'DELIVERED' } : o));
+      if (selectedOrderForModal?.id === orderId) {
+        setSelectedOrderForModal((prev: any) => prev ? { ...prev, status: 'DELIVERED' } : prev);
+      }
+      alert('Xác nhận nhận hàng thành công!');
+    } catch (e: any) {
+      alert('Lỗi: ' + e.message);
+    }
+  };
+
   if (!user && !token) {
     return <div className="text-center py-20 font-bold">Vui lòng đăng nhập để xem hồ sơ.</div>;
   }
@@ -192,6 +207,7 @@ export const ProfilePage = () => {
                 orders={orders}
                 loadingOrders={loadingOrders}
                 setSelectedOrderForModal={setSelectedOrderForModal}
+                onConfirmDelivered={handleConfirmDelivered}
               />
             )}
 
@@ -228,6 +244,7 @@ export const ProfilePage = () => {
         <OrderDetailModal
           order={selectedOrderForModal}
           onClose={() => setSelectedOrderForModal(null)}
+          onConfirmDelivered={handleConfirmDelivered}
         />
       )}
     </div>

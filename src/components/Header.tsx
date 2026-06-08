@@ -34,7 +34,7 @@ export const Header = () => {
   const handleLogout = () => {
     logout();
     setShowUserMenu(false);
-    navigate('/login');
+    navigate('/');
   };
 
   return (

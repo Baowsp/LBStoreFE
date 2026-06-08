@@ -1,7 +1,7 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Box, ShoppingCart, Users, Settings, LogOut,
-  Bell, PackagePlus, Truck, ShieldCheck, Image, UserCircle, Package, ChevronDown, Tag, Layout
+  Bell, PackagePlus, Truck, ShieldCheck, Image, UserCircle, Package, ChevronDown, Tag, Layout, Percent, MessageCircle
 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useState } from 'react';
@@ -15,11 +15,13 @@ export const AdminLayout = () => {
     { icon: <LayoutDashboard size={20} />, label: 'Tổng quan', path: '/admin' },
     { icon: <Box size={20} />, label: 'Sản phẩm', path: '/admin/products' },
     { icon: <ShoppingCart size={20} />, label: 'Đơn hàng', path: '/admin/orders' },
-    { icon: <ShieldCheck size={20} />, label: 'Bảo hành', path: '/admin/warranties' },
+    { icon: <Truck size={20} />, label: 'NV Giao hàng', path: '/admin/delivery-employees' },
     { icon: <Users size={20} />, label: 'Khách hàng', path: '/admin/users' },
     { icon: <Image size={20} />, label: 'Thư viện Banner', path: '/admin/banners' },
     { icon: <Layout size={20} />, label: 'Bố cục Website', path: '/admin/display-banners' },
     { icon: <Tag size={20} />, label: 'Quản lý Voucher', path: '/admin/vouchers' },
+    { icon: <Percent size={20} />, label: 'Khuyến mãi', path: '/admin/promotions' },
+    { icon: <MessageCircle size={20} />, label: 'Hỗ trợ khách hàng', path: '/admin/chat' },
     { icon: <Settings size={20} />, label: 'Cài đặt', path: '/admin/settings' },
   ];
 
@@ -29,39 +31,44 @@ export const AdminLayout = () => {
     navigate('/login');
   };
 
+  const location = useLocation();
+  const isChatDetail = location.pathname.match(/\/admin\/chat\/[a-zA-Z0-9-]+$/);
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* SIDEBAR */}
-      <aside className="w-64 bg-slate-900 text-white flex flex-col fixed h-full">
-        <div className="p-6 border-b border-slate-800">
-          <h1 className="text-xl font-black text-red-500 italic uppercase">CPS Admin</h1>
-        </div>
+      {!isChatDetail && (
+        <aside className="w-64 bg-slate-900 text-white flex flex-col fixed h-full">
+          <div className="p-6 border-b border-slate-800 flex-shrink-0">
+            <h1 className="text-xl font-black text-red-500 italic uppercase">CPS Admin</h1>
+          </div>
 
-        <nav className="flex-1 p-4 space-y-2">
-          {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition-all text-sm font-medium text-slate-300 hover:text-white"
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto scrollbar-thin">
+            {menuItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 transition-all text-sm font-medium text-slate-300 hover:text-white"
+              >
+                {item.icon}
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="p-4 border-t border-slate-800 flex-shrink-0">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-4 py-3 w-full text-red-400 hover:bg-red-500/10 rounded-xl transition-all text-sm font-bold"
             >
-              {item.icon}
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="p-4 border-t border-slate-800">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 w-full text-red-400 hover:bg-red-500/10 rounded-xl transition-all text-sm font-bold"
-          >
-            <LogOut size={20} /> Đăng xuất
-          </button>
-        </div>
-      </aside>
+              <LogOut size={20} /> Đăng xuất
+            </button>
+          </div>
+        </aside>
+      )}
 
       {/* MAIN CONTENT */}
-      <main className="ml-64 flex-1">
+      <main className={`${!isChatDetail ? 'ml-64' : ''} flex-1`}>
         {/* Topbar */}
         <header className="h-16 bg-white border-b flex items-center justify-between px-8 sticky top-0 z-40">
           <h2 className="font-bold text-gray-700">Chào Admin, buổi sáng tốt lành!</h2>
@@ -120,7 +127,7 @@ export const AdminLayout = () => {
         </header>
 
         {/* Dynamic Page Content */}
-        <div className="p-8">
+        <div className={!isChatDetail ? "p-8" : "p-0"}>
           <Outlet />
         </div>
       </main>

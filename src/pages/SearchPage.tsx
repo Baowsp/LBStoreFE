@@ -7,6 +7,7 @@ import type { Product } from '../types/product';
 import { SearchFilters } from '../components/search/SearchFilters';
 import { SearchPagination } from '../components/search/SearchPagination';
 import { CategoryTabs } from '../components/search/CategoryTabs';
+import { readDisplaySetting } from '../utils/displaySettings';
 
 export const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -24,8 +25,8 @@ export const SearchPage = () => {
   const [tempBrand, setTempBrand] = useState('Tất cả');
   const [tempPrice, setTempPrice] = useState('Tất cả');
 
-  const [cols, setCols] = useState(5);
-  const [rows, setRows] = useState(4);
+  const [cols, setCols] = useState(() => readDisplaySetting('search_cols'));
+  const [rows, setRows] = useState(() => readDisplaySetting('search_rows'));
 
   const [appliedFilters, setAppliedFilters] = useState({
     category: 'Tất cả',
@@ -160,37 +161,6 @@ export const SearchPage = () => {
         </div>
       ) : products.length > 0 ? (
         <>
-          <div className="flex items-center gap-6 mb-6 bg-white px-5 py-3 rounded-xl shadow-sm border border-gray-100">
-            <span className="text-sm font-semibold text-gray-600">Hiển thị:</span>
-            <div className="flex items-center gap-2">
-              <label className="text-xs text-gray-500">Cột </label>
-              <input
-                type="number" min="2" max="6"
-                value={cols}
-                onChange={(e) => {
-                  const n = Math.max(2, Math.min(6, parseInt(e.target.value) || 2));
-                  setCols(n);
-                  updateURL({ size: n * rows, page: 1 });
-                }}
-                className="w-16 h-8 px-2 rounded-lg text-sm font-bold border border-gray-200 outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 bg-gray-50 transition-all"
-              />
-            </div>
-            <div className="w-px h-6 bg-gray-200" />
-            <div className="flex items-center gap-2">
-              <label className="text-xs text-gray-500">Hàng </label>
-              <input
-                type="number" min="1" max="10"
-                value={rows}
-                onChange={(e) => {
-                  const n = Math.max(1, Math.min(10, parseInt(e.target.value) || 1));
-                  setRows(n);
-                  updateURL({ size: cols * n, page: 1 });
-                }}
-                className="w-16 h-8 px-2 rounded-lg text-sm font-bold border border-gray-200 outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 bg-gray-50 transition-all"
-              />
-            </div>
-          </div>
-
           <div className={`grid gap-6 mb-12 ${cols === 2 ? "grid-cols-2" :
               cols === 3 ? "grid-cols-2 md:grid-cols-3" :
                 cols === 4 ? "grid-cols-2 md:grid-cols-4" :

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
@@ -12,11 +12,16 @@ export const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login: setAuth, logout } = useAuthStore();
+  const hasLoggedOut = useRef(false);
 
-  // YÊU CẦU: Khi vào trang login thì xóa jwt 
+  // YÊU CẦU: Khi vào trang login thì xóa jwt (chỉ chạy 1 lần khi mount)
   useEffect(() => {
-    logout();
-  }, [logout]);
+    if (!hasLoggedOut.current) {
+      hasLoggedOut.current = true;
+      logout();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

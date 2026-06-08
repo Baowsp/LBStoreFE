@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { Package, ChevronRight, Clock, Truck, CheckCircle2, XCircle } from 'lucide-react';
+import { Package, ChevronRight, Clock, Truck, CheckCircle2, XCircle, PackageCheck } from 'lucide-react';
 
 interface OrdersTabProps {
   orders: any[];
   loadingOrders: boolean;
   setSelectedOrderForModal: (order: any) => void;
+  onConfirmDelivered: (orderId: string) => Promise<void>;
 }
 
-export const OrdersTab = ({ orders, loadingOrders, setSelectedOrderForModal }: OrdersTabProps) => {
+export const OrdersTab = ({ orders, loadingOrders, setSelectedOrderForModal, onConfirmDelivered }: OrdersTabProps) => {
   const [orderFilter, setOrderFilter] = useState('ALL');
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
   const ORDER_STATUS_MAP: Record<string, { label: string, color: string, icon: any }> = {
     PENDING: { label: 'Chờ xử lý', color: 'text-yellow-600 bg-yellow-50 border-yellow-100', icon: <Clock size={14} /> },
@@ -16,6 +18,16 @@ export const OrdersTab = ({ orders, loadingOrders, setSelectedOrderForModal }: O
     SHIPPING: { label: 'Đang giao hàng', color: 'text-purple-600 bg-purple-50 border-purple-100', icon: <Truck size={14} /> },
     DELIVERED: { label: 'Đã hoàn thành', color: 'text-green-600 bg-green-50 border-green-100', icon: <CheckCircle2 size={14} /> },
     CANCELLED: { label: 'Đã hủy', color: 'text-red-600 bg-red-50 border-red-100', icon: <XCircle size={14} /> },
+  };
+
+  const handleConfirm = async (e: React.MouseEvent, orderId: string) => {
+    e.stopPropagation();
+    setConfirmingId(orderId);
+    try {
+      await onConfirmDelivered(orderId);
+    } finally {
+      setConfirmingId(null);
+    }
   };
 
   return (
@@ -53,6 +65,7 @@ export const OrdersTab = ({ orders, loadingOrders, setSelectedOrderForModal }: O
             .map((order) => {
               const statusInfo = ORDER_STATUS_MAP[order.status] || { label: order.status, color: 'bg-gray-100 text-gray-600', icon: <Package size={14} /> };
               const items = order.onlineOrderDetails || [];
+              const isShipping = order.status === 'SHIPPING';
 
               return (
                 <div key={order.id} className="group bg-white rounded-3xl border border-gray-100 hover:border-red-100 transition-all duration-300">
@@ -78,7 +91,17 @@ export const OrdersTab = ({ orders, loadingOrders, setSelectedOrderForModal }: O
                         <div className="text-xl font-black text-red-600">
                           {(order.finalAmount || order.totalAmount).toLocaleString()}đ
                         </div>
-                        <div className="flex items-center gap-3 w-full md:w-auto">
+                        <div className="flex items-center gap-3 w-full md:w-auto flex-wrap justify-end">
+                          {isShipping && (
+                            <button
+                              onClick={(e) => handleConfirm(e, order.id)}
+                              disabled={confirmingId === order.id}
+                              className="flex-1 md:flex-none px-6 py-3 bg-green-600 text-white text-[10px] font-black rounded-xl hover:bg-green-700 transition-all uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-green-100 disabled:opacity-60"
+                            >
+                              <PackageCheck size={14} />
+                              {confirmingId === order.id ? 'Đang xử lý...' : 'Đã nhận hàng'}
+                            </button>
+                          )}
                           <button
                             onClick={() => {
                               console.log("🛒 Order Detail JSON:", order);
@@ -111,3 +134,4 @@ export const OrdersTab = ({ orders, loadingOrders, setSelectedOrderForModal }: O
     </div>
   );
 };
+
