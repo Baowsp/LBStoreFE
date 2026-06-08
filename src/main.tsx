@@ -1,5 +1,5 @@
-if (typeof global === 'undefined') {
-  window.global = window;
+if (typeof (window as any).global === 'undefined') {
+  (window as any).global = window;
 }
 
 import { StrictMode } from 'react'

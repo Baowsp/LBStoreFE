@@ -12,6 +12,7 @@ export interface Variant {
   imageURL: string;
   imageFile?: File;
   previewURL?: string;
+  discountedPrice?: number | null;
 }
 
 interface Props {

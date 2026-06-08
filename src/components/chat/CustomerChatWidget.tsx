@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
-import { chatService, ChatMessage, ChatRoom } from '../../services/chatService';
+import { chatService, type ChatMessage, type ChatRoom } from '../../services/chatService';
 
 export const CustomerChatWidget = () => {
     const { user } = useAuthStore();

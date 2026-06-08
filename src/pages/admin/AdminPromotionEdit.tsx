@@ -53,7 +53,7 @@ export const AdminPromotionEdit = () => {
             title="Chỉnh sửa Khuyến mãi"
             subtitle="Cập nhật thông tin chương trình khuyến mãi"
             submitLabel="Lưu thay đổi"
-            onSubmit={data => updatePromotion(Number(id), data as any)}
+            onSubmit={async data => { await updatePromotion(Number(id), data as any); }}
         />
     );
 };

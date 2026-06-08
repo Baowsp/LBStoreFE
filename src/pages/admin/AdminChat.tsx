@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
-import { chatService, ChatRoom } from '../../services/chatService';
+import { chatService, type ChatRoom } from '../../services/chatService';
 import { UserCircle, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

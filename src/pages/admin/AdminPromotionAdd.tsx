@@ -6,6 +6,6 @@ export const AdminPromotionAdd = () => (
         title="Tạo Khuyến mãi mới"
         subtitle="Thiết lập chương trình giảm giá cho sản phẩm / danh mục"
         submitLabel="Tạo Khuyến mãi"
-        onSubmit={data => createPromotion(data as any)}
+        onSubmit={async data => { await createPromotion(data as any); }}
     />
 );

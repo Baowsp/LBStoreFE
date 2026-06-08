@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
-import { chatService, ChatRoom, ChatMessage } from '../../services/chatService';
+import { chatService, type ChatRoom, type ChatMessage } from '../../services/chatService';
 import { Send, ArrowLeft } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 

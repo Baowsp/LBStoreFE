@@ -202,7 +202,7 @@ export const PromotedProductPage = () => {
 
             {totalPages > 1 && (
               <SearchPagination
-                currentPage={page}
+                currentPage={page - 1}
                 totalPages={totalPages}
                 onPageChange={setPage}
               />
